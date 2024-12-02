@@ -10,7 +10,7 @@ def get_list(line: str):
     return list(map(int, line.split()))
 
 
-def is_safe(levels: list[int], allow_level_removing=False) -> bool:
+def is_safe(levels: list[int]) -> bool:
     """Determines whether or not the line of levels is safe."""
     previous_level = None
     for a, b in zip(levels[:-1], levels[1:]):
@@ -20,11 +20,7 @@ def is_safe(levels: list[int], allow_level_removing=False) -> bool:
         if (not 1 <= abs(level) <= 3) or (
             previous_level is not None and ((level > 0) != (previous_level > 0))
         ):
-            # TODO: Alternative list removal method
-            return allow_level_removing and (
-                is_safe(list(l for l in levels if l != a))
-                or is_safe(list(l for l in levels if l != b))
-            )
+            return False
         previous_level = level
     return True
 
@@ -36,7 +32,14 @@ def solve_part_one(input_text: list[str]):
 
 def solve_part_two(input_text: list[str]):
     """Calculates the solution for day 2, part two."""
-    return sum(1 for line in input_text if is_safe(get_list(line), True))
+
+    def are_any_safe(levels: list[int]) -> bool:
+        for i in range(len(levels)):
+            if is_safe(levels[:i] + levels[i + 1 :]):
+                return True
+        return is_safe(levels)
+
+    return sum(1 for line in input_text if are_any_safe(get_list(line)))
 
 
 def main():

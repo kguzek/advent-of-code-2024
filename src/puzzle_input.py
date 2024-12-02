@@ -47,7 +47,8 @@ def fetch_puzzle_input(day: int) -> str:
     url = INPUT_URL_TEMPLATE.format(day=day)
     response = requests.get(url, cookies=cookies, timeout=10)
     data = response.text
-    response.raise_for_status()  # Ensure we notice bad responses
+    if not response.ok:
+        raise RuntimeError(f"HTTP {response.status_code}: {data}")
     with open(INPUT_FILEPATH.format(day=day), "w", encoding="utf-8") as input_file:
         input_file.write(data)
     return data
