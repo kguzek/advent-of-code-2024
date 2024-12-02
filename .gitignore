@@ -1,0 +1,9 @@
+# Compiled Python source
+__pycache__
+*.pyc
+
+# User-specific user input
+input.txt
+
+# User cookies containing session id
+cookies.json
