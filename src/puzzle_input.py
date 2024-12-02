@@ -6,6 +6,8 @@ import requests
 
 INPUT_URL_TEMPLATE = "https://adventofcode.com/2024/day/{day}/input"
 COOKIES_FILENAME = "cookies.json"
+PUZZLES_FILEPATH = "src/puzzles"
+INPUT_FILEPATH = PUZZLES_FILEPATH + "/day_{day}/input.txt"
 
 
 cookies: dict[str, str] = {}
@@ -46,13 +48,13 @@ def fetch_puzzle_input(day: int):
     response = requests.get(url, cookies=cookies, timeout=10)
     data = response.text
     response.raise_for_status()  # Ensure we notice bad responses
-    return data
+    return data.splitlines()
 
 
 def get_puzzle_input(day: int):
     """Reads the input for the puzzle of the given day from the input.txt file."""
     try:
-        with open(f"puzzles/{day}/input.txt", "r", encoding="utf-8") as input_file:
-            return input_file.read()
+        with open(INPUT_FILEPATH.format(day=day), "r", encoding="utf-8") as input_file:
+            return input_file.readlines()
     except FileNotFoundError:
         return fetch_puzzle_input(day)

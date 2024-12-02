@@ -2,7 +2,7 @@
 
 import os
 
-from .puzzle_input import get_puzzle_input
+from .puzzle_input import get_puzzle_input, PUZZLES_FILEPATH, INPUT_FILEPATH
 
 
 INIT_FILE_TEMPLATE = '''"""Package definition for puzzle {day} solution files"""
@@ -28,10 +28,10 @@ if __name__ == "__main__":
 def setup_solution(day: int):
     """Creates the directory in puzzles/{day} and saves the input to input.txt"""
     print(f"Setting up solution for puzzle {day}...")
-    directory = f"src/puzzles/day_{day}"
+    directory = f"{PUZZLES_FILEPATH}/day_{day}"
     os.makedirs(directory, exist_ok=True)
     input_text = get_puzzle_input(day)
-    with open(f"{directory}/input.txt", "w", encoding="utf-8") as input_file:
+    with open(INPUT_FILEPATH.format(day=day), "w", encoding="utf-8") as input_file:
         input_file.write(input_text)
     with open(f"{directory}/solution.py", "w", encoding="utf-8") as solution_file:
         solution_file.write(
