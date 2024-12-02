@@ -15,13 +15,18 @@ from ...puzzle_input import get_puzzle_input
 SOLUTION_DAY = {day}
 
 
-def solve():
-    """Calculates the solution for day {day}."""
+def solve_part_one():
+    """Calculates the solution for day {day}, part one."""
     input_text = get_puzzle_input(SOLUTION_DAY)
-    # ...
+
+
+def solve_part_two():
+    """Calculates the solution for day {day}, part two."""
+    input_text = get_puzzle_input(SOLUTION_DAY)
 
 if __name__ == "__main__":
-    print("Solution for day {day}:", solve())
+    print("Solution for day {day}, part one:", solve_part_one())
+    print("Solution for day {day}, part two:", solve_part_two())
 '''
 
 

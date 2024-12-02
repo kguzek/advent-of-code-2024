@@ -5,31 +5,25 @@ from ...puzzle_input import get_puzzle_input
 SOLUTION_DAY = 1
 
 
-def solve_alternative():
-    """Calculates the solution for day 1."""
+def create_lists():
+    """Generates two lists from the input."""
     input_text = get_puzzle_input(SOLUTION_DAY)
-    result = 0
-    for line in input_text:
-        a, b = line.split()
-        result += int(a) - int(b)
-    return abs(result)
+    return zip(*(map(int, line.split()) for line in input_text))
 
 
 def solve():
     """Calculates the solution for day 1."""
-    input_text = get_puzzle_input(SOLUTION_DAY)
-    list_a = []
-    list_b = []
-    for line in input_text:
-        a, b = line.split()
-        list_a.append(int(a))
-        list_b.append(int(b))
-    # Sum the pairs of elements of lista and listb sorted ascending
-    result = sum(abs(a - b) for a, b in zip(sorted(list_a), sorted(list_b)))
+    list_a, list_b = create_lists()
+    # Sum the pairs of elements of list_a and list_b sorted ascending
+    return sum(abs(a - b) for a, b in zip(sorted(list_a), sorted(list_b)))
 
-    print(result, solve_alternative())
-    return result
+
+def solve_part_two():
+    """Calculates the solution for day 1, part 2."""
+    list_a, list_b = create_lists()
+    return sum(i * list_b.count(i) for i in list_a)
 
 
 if __name__ == "__main__":
-    print("Solution for day 1:", solve())
+    print("Solution for day 1 part 1:", solve())
+    print("Solution for day 1 part 2:", solve_part_two())
