@@ -7,7 +7,7 @@ SOLUTION_DAY = 1
 
 def create_lists():
     """Generates two lists from the input."""
-    input_text = get_puzzle_input(SOLUTION_DAY)
+    input_text = get_puzzle_input(SOLUTION_DAY).splitlines()
     return zip(*(map(int, line.split()) for line in input_text))
 
 

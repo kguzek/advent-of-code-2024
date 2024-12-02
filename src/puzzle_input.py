@@ -29,7 +29,7 @@ def read_cookies():
         save_cookies()
 
 
-def fetch_puzzle_input(day: int):
+def fetch_puzzle_input(day: int) -> str:
     """Fetches the input for the puzzle of the given day."""
     read_cookies()
     while not cookies.get("session"):
@@ -48,13 +48,15 @@ def fetch_puzzle_input(day: int):
     response = requests.get(url, cookies=cookies, timeout=10)
     data = response.text
     response.raise_for_status()  # Ensure we notice bad responses
-    return data.splitlines()
+    with open(INPUT_FILEPATH.format(day=day), "w", encoding="utf-8") as input_file:
+        input_file.write(data)
+    return data
 
 
-def get_puzzle_input(day: int):
+def get_puzzle_input(day: int) -> str:
     """Reads the input for the puzzle of the given day from the input.txt file."""
     try:
         with open(INPUT_FILEPATH.format(day=day), "r", encoding="utf-8") as input_file:
-            return input_file.readlines()
+            return input_file.read()
     except FileNotFoundError:
         return fetch_puzzle_input(day)

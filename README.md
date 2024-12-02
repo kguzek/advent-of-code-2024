@@ -20,5 +20,5 @@ When you're finished with your solution, proceed to the next section.
 To execute the solution and test it, run the following from the project root:
 
 ```sh
-python -m src.puzzles.day_{DAY}.solution
+./solver.sh {DAY}
 ```
