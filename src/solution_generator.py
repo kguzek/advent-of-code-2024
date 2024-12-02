@@ -2,21 +2,33 @@
 
 import os
 
-from puzzle_input import get_puzzle_input
+from .puzzle_input import get_puzzle_input
 
-SOLUTION_FILE_TEMPLATE = '''
-"""Solution for puzzle {day}, 2024-12-{dayPadded}"""
+
+INIT_FILE_TEMPLATE = '''"""Package definition for puzzle {day} solution files"""
+'''
+
+SOLUTION_FILE_TEMPLATE = '''"""Solution for puzzle {day}, 2024-12-{dayPadded}"""
 
 from ...puzzle_input import get_puzzle_input
 
 SOLUTION_DAY = {day}
+
+
+def solve():
+    """Calculates the solution for day {day}."""
+    input_text = get_puzzle_input(SOLUTION_DAY)
+    # ...
+
+if __name__ == "__main__":
+    print("Solution for day {day}:", solve())
 '''
 
 
 def setup_solution(day: int):
     """Creates the directory in puzzles/{day} and saves the input to input.txt"""
     print(f"Setting up solution for puzzle {day}...")
-    directory = f"puzzles/{day}"
+    directory = f"src/puzzles/day_{day}"
     os.makedirs(directory, exist_ok=True)
     input_text = get_puzzle_input(day)
     with open(f"{directory}/input.txt", "w", encoding="utf-8") as input_file:
@@ -25,6 +37,8 @@ def setup_solution(day: int):
         solution_file.write(
             SOLUTION_FILE_TEMPLATE.format(day=day, dayPadded=str(day).zfill(2))
         )
+    with open(f"{directory}/__init__.py", "w", encoding="utf-8") as init_file:
+        init_file.write(INIT_FILE_TEMPLATE.format(day=day))
     print("Solution file created.")
 
 
