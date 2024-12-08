@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-python -m src.solution_generator
+python src/solution_generator.py $1

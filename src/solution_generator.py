@@ -1,8 +1,9 @@
 """Common functions for all puzzles."""
 
 import os
+import sys
 
-from .puzzle_input import get_puzzle_input, PUZZLES_FILEPATH
+from puzzle_input import get_puzzle_input, PUZZLE_FILEPATH
 
 
 INIT_FILE_TEMPLATE = '''"""Package definition for puzzle {day} solution files"""
@@ -38,9 +39,9 @@ if __name__ == "__main__":
 def setup_solution(day: int):
     """Creates the directory in puzzles/{day} and saves the input to input.txt"""
     print(f"Setting up solution for puzzle {day}...")
-    directory = f"{PUZZLES_FILEPATH}/day_{day}"
-    os.makedirs(directory, exist_ok=True)
+    directory = PUZZLE_FILEPATH.format(day=day)
     get_puzzle_input(day)
+    os.makedirs(directory, exist_ok=True)
     with open(f"{directory}/solution.py", "w", encoding="utf-8") as solution_file:
         solution_file.write(
             SOLUTION_FILE_TEMPLATE.format(day=day, dayPadded=str(day).zfill(2))
@@ -52,7 +53,10 @@ def setup_solution(day: int):
 
 def main():
     """Main entry point for the script."""
-    day = int(input("Enter the day of the puzzle:\n> "))
+    raw_day = (
+        sys.argv[1] if len(sys.argv) > 1 else input("Enter the day of the puzzle:\n> ")
+    )
+    day = int(raw_day)
     setup_solution(day)
 
 

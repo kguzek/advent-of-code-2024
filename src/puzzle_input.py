@@ -1,13 +1,14 @@
 """Common functions related to fetching and storing the puzzle input."""
 
 import json
+import os
 
 import requests
 
 INPUT_URL_TEMPLATE = "https://adventofcode.com/2024/day/{day}/input"
 COOKIES_FILENAME = "cookies.json"
-PUZZLES_FILEPATH = "src/puzzles"
-INPUT_FILEPATH = PUZZLES_FILEPATH + "/day_{day}/input.txt"
+PUZZLE_FILEPATH = "src/puzzles/day_{day}/"
+INPUT_FILENAME = "input.txt"
 
 
 cookies: dict[str, str] = {}
@@ -49,7 +50,10 @@ def fetch_puzzle_input(day: int) -> str:
     data = response.text
     if not response.ok:
         raise RuntimeError(f"HTTP {response.status_code}: {data}")
-    with open(INPUT_FILEPATH.format(day=day), "w", encoding="utf-8") as input_file:
+    directory = PUZZLE_FILEPATH.format(day=day)
+    if not os.path.exists(directory):
+        os.makedirs(directory, True)
+    with open(directory + INPUT_FILENAME, "w", encoding="utf-8") as input_file:
         input_file.write(data)
     return data
 
@@ -57,7 +61,9 @@ def fetch_puzzle_input(day: int) -> str:
 def get_puzzle_input(day: int) -> str:
     """Reads the input for the puzzle of the given day from the input.txt file."""
     try:
-        with open(INPUT_FILEPATH.format(day=day), "r", encoding="utf-8") as input_file:
+        with open(
+            PUZZLE_FILEPATH.format(day=day) + INPUT_FILENAME, "r", encoding="utf-8"
+        ) as input_file:
             return input_file.read()
     except FileNotFoundError:
         return fetch_puzzle_input(day)
