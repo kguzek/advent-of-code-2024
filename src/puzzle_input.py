@@ -9,6 +9,7 @@ INPUT_URL_TEMPLATE = "https://adventofcode.com/2024/day/{day}/input"
 COOKIES_FILENAME = "cookies.json"
 PUZZLE_FILEPATH = "src/puzzles/day_{day}/"
 INPUT_FILENAME = "input.txt"
+SMALL_INPUT_FILENAME = "input-small.txt"
 
 
 cookies: dict[str, str] = {}
@@ -60,10 +61,18 @@ def fetch_puzzle_input(day: int) -> str:
 
 def get_puzzle_input(day: int) -> str:
     """Reads the input for the puzzle of the given day from the input.txt file."""
+    directory = PUZZLE_FILEPATH.format(day=day)
     try:
+        # Prioritise the `input-small.txt` file, if present
         with open(
-            PUZZLE_FILEPATH.format(day=day) + INPUT_FILENAME, "r", encoding="utf-8"
+            directory + SMALL_INPUT_FILENAME,
+            "r",
+            encoding="utf-8",
         ) as input_file:
             return input_file.read()
     except FileNotFoundError:
-        return fetch_puzzle_input(day)
+        try:
+            with open(directory + INPUT_FILENAME, "r", encoding="utf-8") as input_file:
+                return input_file.read()
+        except FileNotFoundError:
+            return fetch_puzzle_input(day)

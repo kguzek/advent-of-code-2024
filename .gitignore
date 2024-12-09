@@ -4,6 +4,7 @@ __pycache__
 
 # User-specific puzzle input
 input.txt
+input-*.txt
 
 # User cookies containing session id
 cookies.json
