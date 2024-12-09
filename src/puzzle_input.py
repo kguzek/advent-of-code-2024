@@ -52,7 +52,7 @@ def fetch_puzzle_input(day: int) -> str:
         raise RuntimeError(f"HTTP {response.status_code}: {data}")
     directory = PUZZLE_FILEPATH.format(day=day)
     if not os.path.exists(directory):
-        os.makedirs(directory, True)
+        os.makedirs(directory, exist_ok=True)
     with open(directory + INPUT_FILENAME, "w", encoding="utf-8") as input_file:
         input_file.write(data)
     return data
