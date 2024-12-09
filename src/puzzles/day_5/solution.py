@@ -5,11 +5,11 @@ from ...puzzle_input import get_puzzle_input
 SOLUTION_DAY = 5
 
 
-def solve_part_one(orders: list[str], page_groups: list[str]):
+def solve_part_one(orders: list[str], updates: list[str]):
     """Calculates the solution for day 5, part one."""
     return sum(
         int(pages.split(",")[pages.count(",") // 2])
-        for pages in page_groups
+        for pages in updates
         if all(
             page_before not in pages
             or page_after not in pages
@@ -20,29 +20,28 @@ def solve_part_one(orders: list[str], page_groups: list[str]):
     )
 
 
-def solve_part_two(orders: list[str], page_groups: list[str]):
+def solve_part_two(orders: list[str], updates: list[str]):
     """Calculates the solution for day 5, part two."""
 
-    def sort_pages(pages: list[int]):
-        for page in pages:
+    def sort_update(update: list[str]):
+        updated = False
+        for page in update:
             for order in orders:
-                page_before, page_after = (int(order) for order in order.split("|"))
+                page_before, page_after = order.split("|")
                 if page_before != page:
                     continue
                 try:
-                    page_after_idx = pages.index(page_after)
+                    page_after_idx = update.index(page_after)
                 except ValueError:
                     continue
-                if pages.index(page_before) < page_after_idx:
+                if update.index(page_before) < page_after_idx:
                     continue
-                pages.remove(page_before)
-                pages.insert(page_after_idx, page_before)
-        return pages
+                update.remove(page_before)
+                update.insert(page_after_idx, page_before)
+                updated = True
+        return int(update[len(update) // 2]) if updated else 0
 
-    return sum(
-        int(sort_pages([int(page) for page in pages.split(",")])[pages.count(",") // 2])
-        for pages in page_groups
-    )
+    return sum(sort_update(update.split(",")) for update in updates)
 
 
 def main():
