@@ -1,15 +1,14 @@
 """Solution for puzzle 9, 2024-12-09"""
 
+from itertools import zip_longest
+
 from ...puzzle_input import get_puzzle_input
 
 SOLUTION_DAY = 9
 
 
-def solve_part_one(input_blocks: list[int]):
+def solve_part_one(file_blocks: list[int], free_blocks: list[int], file_id: int):
     """Calculates the solution for day 9, part one."""
-    file_blocks = input_blocks[::2]
-    file_id = len(file_blocks) - 1
-    free_blocks = input_blocks[1::2]
     free_block_idx = 0
     checksum = 0
     position = file_blocks[0]
@@ -34,11 +33,10 @@ def solve_part_one(input_blocks: list[int]):
     return checksum
 
 
-def solve_part_two(input_blocks: list[int]):
+def solve_part_two(file_blocks: list[int], free_blocks: list[int], file_id: int):
     """Calculates the solution for day 9, part two."""
-    file_blocks = input_blocks[::2]
-    file_id = len(file_blocks) - 1
-    free_blocks = input_blocks[1::2]
+    file_blocks_copy = file_blocks.copy()
+    free_blocks_copy = free_blocks.copy()
     checksum = 0
 
     def increment_checksum(file_block_idx: int, blocks_moved: int, position: int):
@@ -49,11 +47,13 @@ def solve_part_two(input_blocks: list[int]):
         for idx, free in enumerate(free_blocks):
             if free < file_blocks[file_id]:
                 continue
+            if idx >= file_id:
+                break
             # print("...", file_id, file_blocks, free_blocks, idx)
             increment_checksum(
                 file_id,
                 file_blocks[file_id],
-                sum(file_blocks[: idx + 1] + input_blocks[1::2][: idx + 1])
+                sum(file_blocks[: idx + 1] + free_blocks_copy[: idx + 1])
                 - free_blocks[idx],
             )
             free_blocks[idx] -= file_blocks[file_id]
@@ -65,16 +65,57 @@ def solve_part_two(input_blocks: list[int]):
         if idx > 0 and blocks >= 0:
             increment_checksum(idx, blocks, position)
         position += (
-            input_blocks[1::2][idx] if idx < len(free_blocks) else 0
-        ) + input_blocks[::2][idx]
+            free_blocks_copy[idx] if idx < len(free_blocks) else 0
+        ) + file_blocks_copy[idx]
     return checksum
+
+
+def visualise_part_two(file_blocks: list[int], free_blocks: list[int], file_id: int):
+    """Visualize the current state of the file and free blocks."""
+    block_groups = [
+        [str(file_id) * file_length, "." * free_length]
+        for ((file_id, file_length), (_, free_length)) in zip_longest(
+            enumerate(file_blocks), enumerate(free_blocks), fillvalue=(0, 0)
+        )
+    ]
+
+    yield "".join(block for block_group in block_groups for block in block_group)
+
+    while file_id >= 0:
+        for idx, free in enumerate(free_blocks):
+            if free < file_blocks[file_id]:
+                continue
+            if idx >= file_id:
+                break
+            free_blocks[idx] -= file_blocks[file_id]
+            block_groups[idx] = block_groups[idx][:-1] + [
+                f"{file_id}" * file_blocks[file_id],
+                "." * free_blocks[idx],
+            ]
+            block_groups[file_id][0] = "." * file_blocks[file_id]
+            file_blocks[file_id] = 0
+            break
+        yield "".join(block for block_group in block_groups for block in block_group)
+        file_id -= 1
+    yield block_groups
 
 
 def main():
     """Entry point for the solution."""
     input_blocks = [int(c) for c in get_puzzle_input(9).strip()]
-    print("Solution for day 9, part one:", solve_part_one(input_blocks))
-    print("Solution for day 9, part two:", solve_part_two(input_blocks))
+    file_blocks = input_blocks[::2]
+    file_id = len(file_blocks) - 1
+    free_blocks = input_blocks[1::2]
+    print(
+        "Solution for day 9, part one:",
+        solve_part_one(file_blocks[:], free_blocks[:], file_id),
+    )
+    print(
+        "Solution for day 9, part two:",
+        solve_part_two(file_blocks[:], free_blocks[:], file_id),
+    )
+    # for visualisation in visualise_part_two(file_blocks[:], free_blocks[:], file_id):
+    #     print(visualisation)
 
 
 if __name__ == "__main__":
