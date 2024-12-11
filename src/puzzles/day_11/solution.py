@@ -1,5 +1,6 @@
 """Solution for puzzle 11, 2024-12-11"""
 
+from collections import Counter
 from functools import cache
 
 from ...puzzle_input import get_puzzle_input
@@ -9,45 +10,36 @@ SOLUTION_DAY = 11
 
 @cache
 def change_stone(stone: int) -> tuple[int, int | None]:
-    """Determines the next values of a stone after a blink."""
+    """Returns the stone after one blink."""
     if stone == 0:
         return 1, None
     stone_str = str(stone)
-    num_digits = len(stone_str)
-    if num_digits % 2 == 0:
-        halfway_idx = num_digits // 2
-        return int(stone_str[:halfway_idx]), int(stone_str[halfway_idx:])
-    return stone * 2024, None
+    stone_str_len = len(stone_str)
+    if stone_str_len % 2 != 0:
+        return stone * 2024, None
+    midpoint_idx = stone_str_len // 2
+    return int(stone_str[:midpoint_idx]), int(stone_str[midpoint_idx:])
 
 
-def get_stones_after_blinks(
-    stones: list[int], times_blinked: int, blink_offset: int = 0
-):
-    """Computes the list of stones after the given number of blinks."""
-    for blink in range(times_blinked):
-        print(
-            f"Blink {blink + blink_offset + 1:>2}, number of stones: ",
-            end="",
-            flush=True,
-        )
-        to_append = []
-        for i, stone in enumerate(stones):
-            stone, extra_stone = change_stone(stone)
-            stones[i] = stone
-            if extra_stone is not None:
-                to_append.append(extra_stone)
-        stones += to_append
-        print(len(stones))
-    return stones
+def get_stones_count(stones: Counter[int], times_blinked: int):
+    """Calculates the solution for day 11, part one."""
+    for _ in range(times_blinked):
+        for stone, count in list(stones.items()):
+            stones[stone] -= count
+            new_stone, extra_stone = change_stone(stone)
+            stones[new_stone] += count
+            if extra_stone is None:
+                continue
+            stones[extra_stone] += count
+
+    return stones.total()
 
 
 def main():
     """Entry point for the solution."""
-    stones = [int(stone) for stone in get_puzzle_input(11).split()]
-    stones_after_25_blinks = get_stones_after_blinks(stones, 25)
-    print("Solution for day 11, part one:", len(stones_after_25_blinks))
-    stones_after_75_blinks = get_stones_after_blinks(stones_after_25_blinks, 50, 25)
-    print("Solution for day 11, part two:", len(stones_after_75_blinks))
+    stones = Counter(int(stone) for stone in get_puzzle_input(11).split())
+    print("Solution for day 11, part one:", get_stones_count(stones, 25))
+    print("Solution for day 11, part two:", get_stones_count(stones, 50))
 
 
 if __name__ == "__main__":
