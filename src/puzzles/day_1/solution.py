@@ -11,7 +11,7 @@ def create_lists():
     return zip(*(map(int, line.split()) for line in input_text))
 
 
-def solve():
+def solve_part_one():
     """Calculates the solution for day 1."""
     list_a, list_b = create_lists()
     # Sum the pairs of elements of list_a and list_b sorted ascending
@@ -25,5 +25,5 @@ def solve_part_two():
 
 
 if __name__ == "__main__":
-    print("Solution for day 1 part 1:", solve())
+    print("Solution for day 1 part 1:", solve_part_one())
     print("Solution for day 1 part 2:", solve_part_two())
