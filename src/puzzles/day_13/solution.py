@@ -21,34 +21,49 @@ def parse_machine_config(
     return tuple(map(int, match.groups()))
 
 
-def solve_part_one(machine_configs: list[str]):
-    """Calculates the solution for day 13, part one."""
+def get_machine_cost(
+    delta_a_x: int,
+    delta_a_y: int,
+    delta_b_x: int,
+    delta_b_y: int,
+    prize_coordinates: tuple[int, int],
+) -> int:
+    """Returns the cost in tokens of using the machine to win the prize."""
+    prize_x, prize_y = prize_coordinates
+    max_b_presses = int(min(prize_x // delta_b_x, prize_y // delta_b_y))
+    for b_presses in range(max_b_presses + 1, 0, -1):
+        a_presses = (prize_x - b_presses * delta_b_x) // delta_a_x
+        if (
+            prize_x != a_presses * delta_a_x + b_presses * delta_b_x
+            or prize_y != a_presses * delta_a_y + b_presses * delta_b_y
+        ):
+            continue
+        return 3 * a_presses + b_presses
+    # Prize cannot be won
+    return 0
+
+
+def get_tokens_spent(machine_configs: list[str], prize_offset: int = 0) -> int:
+    """Gets the minimum number of tokens needed to get all prizes from the machines."""
     tokens_spent = 0
     for machine_config in machine_configs:
         machine_config = parse_machine_config(machine_config)
         delta_a_x, delta_a_y, delta_b_x, delta_b_y, prize_x, prize_y = machine_config
-        max_b_presses = min(prize_x // delta_b_x, prize_y // delta_b_y)
-        print(f"{max_b_presses = }")
-        for b_presses in range(max_b_presses + 1, 0, -1):
-            a_presses = (prize_x - b_presses * delta_b_x) // delta_a_x
-            if (
-                prize_x != a_presses * delta_a_x + b_presses * delta_b_x
-                or prize_y != a_presses * delta_a_y + b_presses * delta_b_y
-            ):
-                continue
-            tokens_spent += 3 * a_presses + b_presses
+        tokens_spent += get_machine_cost(
+            delta_a_x,
+            delta_a_y,
+            delta_b_x,
+            delta_b_y,
+            (prize_x + prize_offset, prize_y + prize_offset),
+        )
     return tokens_spent
-
-
-def solve_part_two(input_text: list[str]):
-    """Calculates the solution for day 13, part two."""
 
 
 def main():
     """Entry point for the solution."""
     input_text = get_puzzle_input(13).strip().split("\n\n")
-    print("Solution for day 13, part one:", solve_part_one(input_text))
-    print("Solution for day 13, part two:", solve_part_two(input_text))
+    print("Solution for day 13, part one:", get_tokens_spent(input_text))
+    print("Solution for day 13, part two:", get_tokens_spent(input_text, 1e13))
 
 
 if __name__ == "__main__":
