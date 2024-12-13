@@ -8,3 +8,6 @@ input-*.txt
 
 # User cookies containing session id
 cookies.json
+
+# VSCode settings
+.vscode/
