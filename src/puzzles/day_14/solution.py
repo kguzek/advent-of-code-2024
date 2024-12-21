@@ -27,8 +27,8 @@ class Robot:
         return f"Robot(pos={self.pos}, vel={self.vel})"
 
 
-def get_security_factor(
-    robots: list[Robot], time: int, room_width: int, room_height: int
+def solve(
+    robots: list[Robot], time: int, room_width: int, room_height: int, part_two=False
 ):
     """Get the positions of the robots at a given time."""
     quadrants = [0, 0, 0, 0]
@@ -41,20 +41,38 @@ def get_security_factor(
         coords[(x, y)] += 1
         if x == breakpoint_x or y == breakpoint_y:
             continue
-        idx = int(x > breakpoint_x) + 2 * int(y > breakpoint_y)
-        quadrants[idx] += 1
+        quadrants[int(x > breakpoint_x) + 2 * int(y > breakpoint_y)] += 1
+
+    def print_map():
+        for y in range(room_height):
+            for x in range(room_width):
+                print(coords[(x, y)] or ".", end="")
+            print(flush=True)
+
+    consecutive_x = 0
     for y in range(room_height):
-        if y == breakpoint_y:
-            print()
-            continue
         for x in range(room_width):
-            if x == breakpoint_x:
-                print(" ", end="")
-                continue
             num = coords[(x, y)]
-            print(num or ".", end="")
-        print(flush=True)
-    return reduce(mul, quadrants, 1)
+            if not part_two:
+                continue
+            if num > 0:
+                consecutive_x += 1
+            else:
+                consecutive_x = 0
+            if consecutive_x > 7:
+                print_map()
+                return True
+    return False if part_two else reduce(mul, quadrants, 1)
+
+
+def solve_part_two(robots: list[Robot], room_width: int, room_height: int):
+    """Solve part two of the puzzle."""
+    i = 0
+    while True:
+        i += 1
+        # print("Time:", i)
+        if solve(robots, i, room_width, room_height, True):
+            return i
 
 
 def main():
@@ -64,9 +82,12 @@ def main():
     robots = [Robot(line) for line in input_text]
     print(
         "Solution for day 14, part one:",
-        get_security_factor(robots, 100, room_width, room_height),
+        solve(robots, 100, room_width, room_height),
     )
-    # print("Solution for day 14, part two:", solve_part_two(input_text))
+    print(
+        "Solution for day 14, part two:",
+        solve_part_two(robots, room_width, room_height),
+    )
 
 
 if __name__ == "__main__":
