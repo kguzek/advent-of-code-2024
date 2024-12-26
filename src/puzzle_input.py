@@ -7,7 +7,7 @@ import requests
 
 INPUT_URL_TEMPLATE = "https://adventofcode.com/2024/day/{day}/input"
 COOKIES_FILENAME = "cookies.json"
-PUZZLE_FILEPATH = "src/puzzles/day_{day}/"
+PUZZLE_FILEPATH = "src/puzzles/day_{day_padded}/"
 INPUT_FILENAME = "input.txt"
 SMALL_INPUT_FILENAME = "input-small.txt"
 
@@ -51,7 +51,8 @@ def fetch_puzzle_input(day: int) -> str:
     data = response.text
     if not response.ok:
         raise RuntimeError(f"HTTP {response.status_code}: {data}")
-    directory = PUZZLE_FILEPATH.format(day=day)
+    day_padded = str(day).zfill(2)
+    directory = PUZZLE_FILEPATH.format(day_padded=day_padded)
     if not os.path.exists(directory):
         os.makedirs(directory, exist_ok=True)
     with open(directory + INPUT_FILENAME, "w", encoding="utf-8") as input_file:
@@ -61,7 +62,8 @@ def fetch_puzzle_input(day: int) -> str:
 
 def get_puzzle_input(day: int) -> str:
     """Reads the input for the puzzle of the given day from the input.txt file."""
-    directory = PUZZLE_FILEPATH.format(day=day)
+    day_padded = str(day).zfill(2)
+    directory = PUZZLE_FILEPATH.format(day_padded=day_padded)
     try:
         # Prioritise the `input-small.txt` file, if present
         with open(

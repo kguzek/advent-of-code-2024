@@ -9,7 +9,7 @@ from puzzle_input import get_puzzle_input, PUZZLE_FILEPATH
 INIT_FILE_TEMPLATE = '''"""Package definition for puzzle {day} solution files"""
 '''
 
-SOLUTION_FILE_TEMPLATE = '''"""Solution for puzzle {day}, 2024-12-{dayPadded}"""
+SOLUTION_FILE_TEMPLATE = '''"""Solution for puzzle {day}, 2024-12-{day_padded}"""
 
 from ...puzzle_input import get_puzzle_input
 
@@ -39,12 +39,13 @@ if __name__ == "__main__":
 def setup_solution(day: int):
     """Creates the directory in puzzles/{day} and saves the input to input.txt"""
     print(f"Setting up solution for puzzle {day}...")
-    directory = PUZZLE_FILEPATH.format(day=day)
+    day_padded = str(day).zfill(2)
+    directory = PUZZLE_FILEPATH.format(day_padded=day_padded)
     get_puzzle_input(day)
     os.makedirs(directory, exist_ok=True)
     with open(f"{directory}/solution.py", "w", encoding="utf-8") as solution_file:
         solution_file.write(
-            SOLUTION_FILE_TEMPLATE.format(day=day, dayPadded=str(day).zfill(2))
+            SOLUTION_FILE_TEMPLATE.format(day=day, day_padded=day_padded)
         )
     with open(f"{directory}/__init__.py", "w", encoding="utf-8") as init_file:
         init_file.write(INIT_FILE_TEMPLATE.format(day=day))
